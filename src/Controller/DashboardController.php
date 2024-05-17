@@ -132,6 +132,8 @@ class DashboardController extends AbstractController
         ]);
     }
 
+    
+
     /**
      * @Route("/users/registration-date", name="users_registration_date")
      */

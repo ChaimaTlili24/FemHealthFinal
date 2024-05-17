@@ -75,7 +75,7 @@
                                         </td>
                                         <td>{{ evenement.montant }}</td>
                                         <td>
-                                            <img class="card-img rounded-0" style="width: 50%;" width="40px" src="{{ evenement.image }}" alt="Event Image">
+                                            <img class="card-img rounded-0" style="width: 50%;" width="40px" src="{{asset('assets/uploads/events/' ~ evenement.image)}}" alt="Event Image">
                                         </td>
                                     </tr>
                                     {% endfor %}

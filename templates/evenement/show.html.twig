@@ -62,7 +62,6 @@
         }
     </style>
 {% endblock %}
-
 {% block body %}
     <div class="container">
         <div class="row justify-content-center">
@@ -92,7 +91,8 @@
                                 </tr>
                                 <tr>
                                     <th>Image</th>
-                                    <td>{{ evenement.image }}</td>
+                                    <td><img src="{{asset('assets/uploads/events/' ~ evenement.image)}}" alt="Product Image" style="max-width: 100px; max-height: 100px;">
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>Localisation</th>

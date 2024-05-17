@@ -8,6 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Publication;
 use Knp\Component\Pager\PaginatorInterface;
+
 class MetierController extends AbstractController
 {
     #[Route('/metier', name: 'app_metier')]
@@ -34,7 +35,7 @@ class MetierController extends AbstractController
 }
 
 #[Route('/frontmetier', name: 'frontmetier')]
-    public function front_index(Request $request ): Response
+    public function front_index(Request $request , PaginatorInterface $paginator): Response
 {
     $searchValue = $request->query->get('search');
     $dateFilter = $request->query->get('date');
@@ -50,8 +51,17 @@ class MetierController extends AbstractController
         $publications = $this->filterByDate($publications, $dateFilter);
     }
 
+
+    
+    $pagination = $paginator->paginate(
+        $publications,
+        $request->query->getInt('page', 1), // Current page number
+        4 // Number of items per page&
+    );
+        
     return $this->render('publication/front_index.html.twig', [
         'publications' => $publications,
+        'p' => $pagination,
     ]);
 }
 private function filterBySearch(array $publications, string $searchValue): array

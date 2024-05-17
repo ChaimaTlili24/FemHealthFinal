@@ -120,7 +120,7 @@
             <tbody>
                 {% for evenement in evenement %}
                     <tr>
-                        <td><img src="{{ evenement.image }}" alt="Event Image" style="max-width: 100px;"></td>
+                        <td><img src="{{asset('assets/uploads/events/' ~ evenement.image)}}" alt="Event Image" style="max-width: 100px;"></td>
                         <td>{{ evenement.nom }}</td>
                         <td>{{ evenement.montant }}</td>
                         <td>
@@ -177,7 +177,3 @@
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 {% endblock %}
-
-
-
-

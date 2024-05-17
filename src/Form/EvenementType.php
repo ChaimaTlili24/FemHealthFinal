@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Form;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 use App\Entity\Evenement;
 use Symfony\Component\Form\AbstractType;
@@ -30,7 +31,11 @@ class EvenementType extends AbstractType
                     //new Assert\Date(['message' => 'La date de fin doit être une date valide']),
                 ],
             ])
-            ->add('image')
+            ->add('image', FileType::class, [
+                'multiple' => false, 
+                'mapped' => false,
+                'required' => false,
+            ])
             ->add('localisation', null, [
                 'constraints' => [
                     new Assert\NotBlank(['message' => 'La localisation est requise']),
@@ -52,4 +57,5 @@ class EvenementType extends AbstractType
             'data_class' => Evenement::class,
         ]);
     }
+
 }

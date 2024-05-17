@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Controller;
-
+use Symfony\Component\String\Slugger\AsciiSlugger;
 use App\Entity\Evenement;
 use App\Form\EvenementType;
 use App\Repository\EvenementRepository;
@@ -64,6 +64,8 @@ class EvenementController extends AbstractController    //admin
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $this->uploadImages($evenement, $form->get('image')->getData());
+
             $entityManager->persist($evenement);//enregistre l'objet evenement dans la base de données en utilisant l'EntityManager
             $entityManager->flush();//fai reelement l'action
 
@@ -221,45 +223,22 @@ public function list1(Request $request, int $typeId, EntityManagerInterface $ent
         ]);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    #[Route('/calendar', name: 'calendarpub')]
-    public function calendar(EvenementRepository $evenementRepository): Response
+private function uploadImages(Evenement $evenement, $image): void
     {
-        $evenements = $evenementRepository->findAll();
+        $destination = $this->getParameter('kernel.project_dir') . '/public/assets/uploads/events/';
 
-        $rdvs = [];
+       
+            $originalFilename = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
+            $slugger = new AsciiSlugger();
+            $safeFilename = $slugger->slug($originalFilename);
+            $newFilename = $safeFilename . '-' . uniqid() . '.' . $image->guessExtension();
 
-        foreach ($evenements as $event) {
-            $rdvs[] = [
-                'id' => $event->getId(),
-                'title' => $event->getNom(),
-                'start' => $event->getDateDebut()->format('Y-m-d'),
-                'end' => $event->getDateFin()->format('Y-m-d'),
-                'description' => $event->getLocalisation()
-            ];
-        }
+            $image->move($destination, $newFilename);
 
-        $data = json_encode($rdvs);
-
-        return $this->render('evenement/test2.html.twig', compact('data'));
+           
+            $evenement->setImage($newFilename);
+           
+        
     }
+   
 }

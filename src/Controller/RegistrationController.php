@@ -15,6 +15,7 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class RegistrationController extends AbstractController
 {
@@ -28,20 +29,26 @@ class RegistrationController extends AbstractController
     /**
      * @Route("/register", name="app_register")
      */
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, UserAuthenticatorInterface $userAuthenticator, AppCustomAuthenticator $authenticator, EntityManagerInterface $entityManager,MailerInterface $mailer ): Response
+    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder,UserPasswordHasherInterface $userPasswordHasher, UserAuthenticatorInterface $userAuthenticator, AppCustomAuthenticator $authenticator, EntityManagerInterface $entityManager,MailerInterface $mailer ): Response
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+           // $hashedPassword = $passwordEncoder->encodePassword($user, $form->get('plainPassword')->getData());
+            $hashedPassword = password_hash($form->get('plainPassword')->getData(), PASSWORD_BCRYPT, ['cost' => 13]);
+            $hashedPassword=str_replace("$2y","$2a",$hashedPassword );
+
+
+            $user->setPassword($hashedPassword);
             // encode the plain password
-            $user->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('plainPassword')->getData()
-                )
-            );
+            // $user->setPassword(
+            //     $userPasswordHasher->hashPassword(
+            //         $user,
+            //         $form->get('plainPassword')->getData()
+            //     )
+            // ); 
             //Définition du rôle et de l'état actif de l'utilisateur :
             $user->setRoles(['ROLE_CLIENT']);
             $user->setActive(true);
